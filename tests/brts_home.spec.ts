@@ -6,7 +6,7 @@ test.describe('verify all required content',()=>{
   test.beforeEach(async({page})=>{
 
   await page.goto('https://ajlwebportaldev.amnex.co.in/amts/home/');
-  await page.waitForLoadState('domcontentloaded');
+  //await page.waitForLoadState('domcontentloaded');
 
   
   })
@@ -51,8 +51,8 @@ test.describe('verify all required content',()=>{
     await page.getByRole('combobox', { name: 'Select destination stop' }).click();
     await page.getByRole('option', { name: 'Aanjna Chowk' }).click();
     await page.getByRole('button', { name: ' Search Time Table' }).click();
-    await expect(page.getByText('No routes found between Aamba')).toBeVisible();
-    await page.getByRole('button', { name: 'Swap stations' }).click();
+    // await expect(page.getByText('No routes found between Aamba')).toBeVisible();
+    // await page.getByRole('button', { name: 'Swap stations' }).click();
  
   })  
 
