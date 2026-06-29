@@ -1,19 +1,14 @@
 import { test, expect } from '@playwright/test';
-import { link } from 'node:fs';
-import { beforeEach } from 'node:test';
 
 test.describe('verify all required content',()=>{
   test.beforeEach(async({page})=>{
 
   await page.goto('https://ajlwebportaldev.amnex.co.in/amts/home/');
-  //await page.waitForLoadState('domcontentloaded');
-
   
   })
 
   test('Page should have these content', async ({ page }) => {
     
-    // Expect a title "to contain" a substring.
     await expect(page).toHaveTitle('Home | AMTS - Ahmedabad Municipal Transport Service');
     await expect (page.getByRole('heading', { name: 'AMTS Online Service ' })).toBeVisible();
     await expect (page.getByRole('heading', { name: 'What\'s New' })).toBeVisible();
@@ -41,7 +36,7 @@ test.describe('verify all required content',()=>{
     await expect(page.getByRole('tab', { name: 'Akshardham Mandir (' })).toBeVisible();
   });
 
-  test('Timetabel', async({page})=>{
+  test('Timetable', async({page})=>{
     
     await page.getByRole('tab', { name: ' Track Route' }).click();
     await page.getByRole('tab', { name: ' Time Table' }).click();
@@ -51,9 +46,7 @@ test.describe('verify all required content',()=>{
     await page.getByRole('combobox', { name: 'Select destination stop' }).click();
     await page.getByRole('option', { name: 'Aanjna Chowk' }).click();
     await page.getByRole('button', { name: ' Search Time Table' }).click();
-    // await expect(page.getByText('No routes found between Aamba')).toBeVisible();
-    // await page.getByRole('button', { name: 'Swap stations' }).click();
- 
+    
   });
   
   test('Verify Gravience', async({page})=>{
@@ -63,7 +56,7 @@ test.describe('verify all required content',()=>{
   await page.getByRole('button', { name: 'Continue' }).click();
   await page.getByRole('textbox').first().click();
   await page.getByRole('textbox').first().fill('1');
-  await page.getByRole('textbox').nth(1).fill('2');
+  await page.getByRole('textbox').nth(1).fill('2'); 
   await page.getByRole('textbox').nth(2).fill('3');
   await page.getByRole('textbox').nth(3).fill('4');
   await page.getByRole('button', { name: 'Login' }).click();
@@ -79,7 +72,6 @@ test.describe('verify all required content',()=>{
   await page.getByRole('button', { name: ' View My Grievances' }).click();
   await expect (page.getByText('Over Speeding').first()).toBeVisible();
   
-
 });
 
 })
