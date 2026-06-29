@@ -58,7 +58,6 @@ test.describe('verify all required content',()=>{
   
   test('Verify Gravience', async({page})=>{
   await page.getByRole('link', { name: ' Login / Register' }).click();
-  await page.getByRole('textbox', { name: 'Mobile Number*' }).click();
   await page.getByRole('textbox', { name: 'Mobile Number*' }).fill('9099590779');
   await page.getByRole('checkbox', { name: 'By continuing you agree to' }).check();
   await page.getByRole('button', { name: 'Continue' }).click();
@@ -75,11 +74,11 @@ test.describe('verify all required content',()=>{
   await page.getByRole('combobox', { name: 'Select a sub-category...' }).click();
   await page.getByText('Over Speeding').click();
   await page.getByRole('textbox', { name: 'Incident Date & Time *' }).fill('2026-06-29T17:50');
-  await page.getByRole('textbox', { name: 'Problem Description *' }).click();
   await page.getByRole('textbox', { name: 'Problem Description *' }).fill('test grievances');
   await page.getByRole('button', { name: 'Submit Grievance', exact: true }).click();
   await page.getByRole('button', { name: ' View My Grievances' }).click();
-  await page.getByText('Over Speeding').first()  
+  await expect (page.getByText('Over Speeding').first()).toBeVisible();
+  
 
 });
 
