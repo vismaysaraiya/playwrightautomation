@@ -4,9 +4,7 @@ test.describe('verify all required content',()=>{
   test.beforeEach(async({page})=>{
 
   await page.goto('https://ajlwebportaldev.amnex.co.in/amts/home/');
-  // const baseURL = test.info().project.use.baseURL;
-  // console.log('my',baseURL);
-  // await page.goto(baseURL!);
+  
   
   })
 
@@ -49,6 +47,8 @@ test.describe('verify all required content',()=>{
     await page.getByRole('combobox', { name: 'Select destination stop' }).click();
     await page.getByRole('option', { name: 'Aanjna Chowk' }).click();
     await page.getByRole('button', { name: ' Search Time Table' }).click();
+
+    await expect (page.getByText('Available Routes')).toBeVisible();
     
   });
   
@@ -75,5 +75,46 @@ test.describe('verify all required content',()=>{
     await page.getByRole('button', { name: ' View My Grievances' }).click();
     await expect (page.getByText('Over Speeding').first()).toBeVisible();
   });
+///
+
+//import { test, expect, request } from '@playwright/test';
+
+test('GetBusList API returns bus list successfully', async ({ request }) => {
+  const response = await request.post(
+    'https://ajlmobileapidev.amnex.co.in/WebportalBusTracking/GetBusList',
+    {
+      headers: {
+        accept: '*/*',
+        'accept-language': 'en-US,en;q=0.9',
+        'content-type': 'application/json',
+        origin: 'https://ajlwebportaldev.amnex.co.in',
+        priority: 'u=1, i',
+        referer: 'https://ajlwebportaldev.amnex.co.in/',
+        'sec-ch-ua': '"Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-site',
+        strdeviceid: 'web-ajl-portal',
+        strplatformtype: 'WEB',
+        strversionno: '1.0.0',
+        'user-agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36',
+      },
+      data: {
+        intTransportModeID: 3,
+      },
+    }
+  );
+
+  expect(response.status()).toBe(200);
+
+  const responseBody = await response.json();
+  console.log(responseBody);
+
+  // Add further assertions based on the expected response shape
+  // e.g. expect(responseBody).toHaveProperty('lstBusList');
+});
 
 })
