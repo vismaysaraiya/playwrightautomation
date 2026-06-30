@@ -4,6 +4,9 @@ test.describe('verify all required content',()=>{
   test.beforeEach(async({page})=>{
 
   await page.goto('https://ajlwebportaldev.amnex.co.in/amts/home/');
+  // const baseURL = test.info().project.use.baseURL;
+  // console.log('my',baseURL);
+  // await page.goto(baseURL!);
   
   })
 
@@ -49,29 +52,28 @@ test.describe('verify all required content',()=>{
     
   });
   
-  test('Verify Gravience', async({page})=>{
-  await page.getByRole('link', { name: ' Login / Register' }).click();
-  await page.getByRole('textbox', { name: 'Mobile Number*' }).fill('9099590779');
-  await page.getByRole('checkbox', { name: 'By continuing you agree to' }).check();
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByRole('textbox').first().click();
-  await page.getByRole('textbox').first().fill('1');
-  await page.getByRole('textbox').nth(1).fill('2'); 
-  await page.getByRole('textbox').nth(2).fill('3');
-  await page.getByRole('textbox').nth(3).fill('4');
-  await page.getByRole('button', { name: 'Login' }).click();
-  await page.getByText('Services').first().click();
-  await page.getByRole('link', { name: 'Grievances', exact: true }).click();
-  await page.getByRole('combobox', { name: 'Select a category...' }).click();
-  await page.getByRole('option', { name: 'Driver' }).click();
-  await page.getByRole('combobox', { name: 'Select a sub-category...' }).click();
-  await page.getByText('Over Speeding').click();
-  await page.getByRole('textbox', { name: 'Incident Date & Time *' }).fill('2026-06-29T17:50');
-  await page.getByRole('textbox', { name: 'Problem Description *' }).fill('test grievances');
-  await page.getByRole('button', { name: 'Submit Grievance', exact: true }).click();
-  await page.getByRole('button', { name: ' View My Grievances' }).click();
-  await expect (page.getByText('Over Speeding').first()).toBeVisible();
-  
-});
+    test('Verify Gravience', async({page})=>{
+    await page.getByRole('link', { name: ' Login / Register' }).click();
+    await page.getByRole('textbox', { name: 'Mobile Number*' }).fill('9099590779');
+    await page.getByRole('checkbox', { name: 'By continuing you agree to' }).check();
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await page.getByRole('textbox').first().click();
+    await page.getByRole('textbox').first().fill('1');
+    await page.getByRole('textbox').nth(1).fill('2'); 
+    await page.getByRole('textbox').nth(2).fill('3');
+    await page.getByRole('textbox').nth(3).fill('4');
+    await page.getByRole('button', { name: 'Login' }).click();
+    await page.getByText('Services').first().click();
+    await page.getByRole('link', { name: 'Grievances', exact: true }).click();
+    await page.getByRole('combobox', { name: 'Select a category...' }).click();
+    await page.getByRole('option', { name: 'Driver' }).click();
+    await page.getByRole('combobox', { name: 'Select a sub-category...' }).click();
+    await page.getByText('Over Speeding').click();
+    await page.getByRole('textbox', { name: 'Incident Date & Time *' }).fill('2026-06-29T17:50');
+    await page.getByRole('textbox', { name: 'Problem Description *' }).fill('test grievances');
+    await page.getByRole('button', { name: 'Submit Grievance', exact: true }).click();
+    await page.getByRole('button', { name: ' View My Grievances' }).click();
+    await expect (page.getByText('Over Speeding').first()).toBeVisible();
+  });
 
 })
