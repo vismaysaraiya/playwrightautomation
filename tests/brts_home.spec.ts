@@ -37,16 +37,12 @@ test.describe('verify all required content',()=>{
     await expect(page.getByRole('tab', { name: 'Akshardham Mandir (' })).toBeVisible();
   });
 
-<<<<<<< HEAD
-  test('Timetable', async({page})=>{
-=======
   test('list of all routes', async({page})=>{
     const routes = await page.locator('.route-list .route-item').allTextContents();
     console.log('List of all routes:', routes);
   });
 
   test('Timetabel', async({page})=>{
->>>>>>> 781c086 (list of timetable)
     
     await page.getByRole('tab', { name: ' Track Route' }).click();
     await page.getByRole('tab', { name: ' Time Table' }).click();
@@ -56,60 +52,8 @@ test.describe('verify all required content',()=>{
     await page.getByRole('combobox', { name: 'Select destination stop' }).click();
     await page.getByRole('option', { name: 'Aanjna Chowk' }).click();
     await page.getByRole('button', { name: ' Search Time Table' }).click();
-<<<<<<< HEAD
-
-    await expect (page.getByText('Available Routes')).toBeVisible();
-    
-  });
-  
-    test('Verify Gravience', async({page})=>{
-    await page.getByRole('link', { name: ' Login / Register' }).click();
-    await page.getByRole('textbox', { name: 'Mobile Number*' }).fill('9099590779');
-    await page.getByRole('checkbox', { name: 'By continuing you agree to' }).check();
-    await page.getByRole('button', { name: 'Continue' }).click();
-    await page.getByRole('textbox').first().click();
-    await page.getByRole('textbox').first().fill('1');
-    await page.getByRole('textbox').nth(1).fill('2'); 
-    await page.getByRole('textbox').nth(2).fill('3');
-    await page.getByRole('textbox').nth(3).fill('4');
-    await page.getByRole('button', { name: 'Login' }).click();
-    await page.getByText('Services').first().click();
-    await page.getByRole('link', { name: 'Grievances', exact: true }).click();
-    await page.getByRole('combobox', { name: 'Select a category...' }).click();
-    await page.getByRole('option', { name: 'Driver' }).click();
-    await page.getByRole('combobox', { name: 'Select a sub-category...' }).click();
-    await page.getByText('Over Speeding').click();
-    await page.getByRole('textbox', { name: 'Incident Date & Time *' }).fill('2026-06-29T17:50');
-    await page.getByRole('textbox', { name: 'Problem Description *' }).fill('test grievances');
-    await page.getByRole('button', { name: 'Submit Grievance', exact: true }).click();
-    await page.getByRole('button', { name: ' View My Grievances' }).click();
-    await expect (page.getByText('Over Speeding').first()).toBeVisible();
-  });
-///
-
-//import { test, expect, request } from '@playwright/test';
-const BASE_URL = 'https://ajlmobileapidev.amnex.co.in';
-test('GetBusList returns bus list successfully', async ({ request }) => {
-  
-  const response = await request.post(`${BASE_URL}/WebportalBusTracking/GetBusList`, {
-    headers: {
-      'content-type': 'application/json',
-      strdeviceid: 'web-ajl-portal',
-      strplatformtype: 'WEB',
-      strversionno: '1.0.0',
-    },
-    data: { intTransportModeID: 3 },
-  });
-
-  expect(response.status()).toBe(200);
-
-  const body = await response.json();
-  expect(body).toBeTruthy();
-});
-=======
     
  
   })  
->>>>>>> 781c086 (list of timetable)
 
 })
