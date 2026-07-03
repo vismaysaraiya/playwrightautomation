@@ -37,7 +37,16 @@ test.describe('verify all required content',()=>{
     await expect(page.getByRole('tab', { name: 'Akshardham Mandir (' })).toBeVisible();
   });
 
+<<<<<<< HEAD
   test('Timetable', async({page})=>{
+=======
+  test('list of all routes', async({page})=>{
+    const routes = await page.locator('.route-list .route-item').allTextContents();
+    console.log('List of all routes:', routes);
+  });
+
+  test('Timetabel', async({page})=>{
+>>>>>>> 781c086 (list of timetable)
     
     await page.getByRole('tab', { name: ' Track Route' }).click();
     await page.getByRole('tab', { name: ' Time Table' }).click();
@@ -47,6 +56,7 @@ test.describe('verify all required content',()=>{
     await page.getByRole('combobox', { name: 'Select destination stop' }).click();
     await page.getByRole('option', { name: 'Aanjna Chowk' }).click();
     await page.getByRole('button', { name: ' Search Time Table' }).click();
+<<<<<<< HEAD
 
     await expect (page.getByText('Available Routes')).toBeVisible();
     
@@ -96,5 +106,10 @@ test('GetBusList returns bus list successfully', async ({ request }) => {
   const body = await response.json();
   expect(body).toBeTruthy();
 });
+=======
+    
+ 
+  })  
+>>>>>>> 781c086 (list of timetable)
 
 })
