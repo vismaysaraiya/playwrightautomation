@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../pages/homepage';
+import { mobileNumber, otp } from '../test-data/loginData';
 
 test.describe('AMTS Home - verify all required content', () => {
   let homePage: HomePage;
@@ -40,17 +41,9 @@ test.describe('AMTS Home - verify all required content', () => {
     await expect(homePage.availableRoutesText).toBeVisible();
   });
 
+
   test('Grievance submission should appear in My Grievances', async ({ page }) => {
-    // NOTE: never hardcode a real OTP/mobile number in source. Supply them via
-    // env vars (e.g. .env + dotenv, or CI secrets) so this test runs safely in CI.
-    const mobileNumber = process.env.TEST_MOBILE_NUMBER;
-    const otp = process.env.TEST_OTP;
-
-    if (!mobileNumber || !otp) {
-      test.skip(true, 'TEST_MOBILE_NUMBER / TEST_OTP env vars are not set');
-    }
-
-    await homePage.login(mobileNumber!, otp!);
+    await homePage.login(mobileNumber, otp);
     await page.waitForURL(/amts\/home/); // ensure login redirect completes before proceeding
 
     await homePage.submitGrievance({
