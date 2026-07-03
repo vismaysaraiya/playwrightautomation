@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Git Command Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f4f0;
+      color: #1a1a18;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1a18;
+      color: #f5f4f0;
+      padding: 2rem 2.5rem;
+    }
+
+    header h1 {
+      font-size: 24px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    header p {
+      font-size: 14px;
+      color: #888780;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+
+    .search-wrap {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 14px;
+      font-size: 14px;
+      border: 1px solid #d3d1c7;
+      border-radius: 8px;
+      background: #fff;
+      color: #1a1a18;
+      outline: none;
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus {
+      border-color: #378add;
+      box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.15);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+
+    .tab {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid #d3d1c7;
+      font-size: 13px;
+      cursor: pointer;
+      background: #fff;
+      color: #5f5e5a;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .tab:hover { background: #f1efe8; color: #1a1a18; }
+
+    .tab.active-all    { background: #e6f1fb; color: #185fa5; border-color: #85b7eb; font-weight: 500; }
+    .tab.active-branch { background: #e6f1fb; color: #185fa5; border-color: #85b7eb; font-weight: 500; }
+    .tab.active-remote { background: #eaf3de; color: #3b6d11; border-color: #97c459; font-weight: 500; }
+    .tab.active-merge  { background: #EEEDFE; color: #534ab7; border-color: #AFA9EC; font-weight: 500; }
+    .tab.active-history{ background: #faeeda; color: #854f0b; border-color: #EF9F27; font-weight: 500; }
+    .tab.active-cleanup{ background: #fcebeb; color: #a32d2d; border-color: #F09595; font-weight: 500; }
+    .tab.active-setup  { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; font-weight: 500; }
+
+    .counter {
+      font-size: 13px;
+      color: #888780;
+      margin-bottom: 1rem;
+    }
+
+    .cmd-card {
+      background: #fff;
+      border: 1px solid #d3d1c7;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+
+    .cmd-card:hover { border-color: #b4b2a9; }
+    .cmd-card.open  { border-color: #378add; }
+
+    .cmd-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0.9rem 1.25rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .cmd-badge {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      font-weight: 500;
+      background: #f1efe8;
+      border: 1px solid #d3d1c7;
+      padding: 3px 10px;
+      border-radius: 6px;
+      color: #1a1a18;
+      white-space: nowrap;
+    }
+
+    .cmd-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a18;
+      flex: 1;
+    }
+
+    .cmd-tag {
+      font-size: 11px;
+      padding: 2px 9px;
+      border-radius: 6px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .tag-branch  { background: #e6f1fb; color: #185fa5; }
+    .tag-remote  { background: #eaf3de; color: #3b6d11; }
+    .tag-merge   { background: #EEEDFE; color: #534ab7; }
+    .tag-history { background: #faeeda; color: #854f0b; }
+    .tag-cleanup { background: #fcebeb; color: #a32d2d; }
+    .tag-setup   { background: #E1F5EE; color: #0F6E56; }
+
+    .steps-list {
+      list-style: none;
+      margin: 0.5rem 0 0.75rem;
+      padding: 0;
+      counter-reset: step-counter;
+    }
+
+    .steps-list li {
+      counter-increment: step-counter;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f1efe8;
+      font-size: 14px;
+      color: #1a1a18;
+      line-height: 1.5;
+    }
+
+    .steps-list li:last-child { border-bottom: none; }
+
+    .step-num {
+      min-width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #E1F5EE;
+      color: #0F6E56;
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .step-text { flex: 1; }
+    .step-text code {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      background: #f1efe8;
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: #1a1a18;
+    }
+
+    .section-divider {
+      font-size: 11px;
+      font-weight: 500;
+      color: #888780;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 1.5rem 0 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #f1efe8;
+    }
+
+    .chevron {
+      font-size: 18px;
+      color: #888780;
+      transition: transform 0.2s;
+      line-height: 1;
+    }
+
+    .cmd-card.open .chevron { transform: rotate(180deg); }
+
+    .cmd-body {
+      display: none;
+      padding: 0 1.25rem 1.25rem;
+      border-top: 1px solid #f1efe8;
+      margin-top: 0;
+    }
+
+    .cmd-card.open .cmd-body { display: block; }
+
+    .cmd-desc {
+      font-size: 14px;
+      color: #5f5e5a;
+      line-height: 1.65;
+      margin: 0.85rem 0 0.75rem;
+    }
+
+    .code-label {
+      font-size: 12px;
+      color: #888780;
+      margin: 0.75rem 0 4px;
+    }
+
+    .code-block {
+      background: #f5f4f0;
+      border: 1px solid #d3d1c7;
+      border-radius: 6px;
+      padding: 0.65rem 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      color: #1a1a18;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .tip {
+      font-size: 13px;
+      color: #185fa5;
+      background: #e6f1fb;
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      margin-top: 0.85rem;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      color: #888780;
+      font-size: 14px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: #5f5e5a;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 13px;
+      color: #888780;
+      border-top: 1px solid #d3d1c7;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 1.5rem 1rem; }
+      .cmd-title { display: none; }
+      .cmd-badge { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⎇ Git Command Guide</h1>
+  <p>Complete reference — setup, fork, branch, push/pull, merge, history, and cleanup. Click any command to expand.</p>
+</header>
+
+<div class="container">
+
+  <div class="controls">
+    <div class="search-wrap">
+      <input type="text" id="search" placeholder="Search commands… e.g. push, merge, delete" oninput="filterCmds()" />
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active-all" onclick="setTab('all', this)">All commands</button>
+    <button class="tab" onclick="setTab('setup', this)">🛠️ Setup / Fork</button>
+    <button class="tab" onclick="setTab('branch', this)">🌿 Branch</button>
+    <button class="tab" onclick="setTab('remote', this)">☁️ Push / Pull</button>
+    <button class="tab" onclick="setTab('merge', this)">🔀 Merge / Rebase</button>
+    <button class="tab" onclick="setTab('history', this)">📜 History</button>
+    <button class="tab" onclick="setTab('cleanup', this)">🗑️ Delete / Clean</button>
+  </div>
+
+  <div class="counter" id="counter">Showing all 23 commands</div>
+  <div id="cmd-list"></div>
+
+  <footer>Git Command Guide &nbsp;·&nbsp; Made with Claude &nbsp;·&nbsp; github.com/vismaysaraiya/playwrightautomation</footer>
+</div>
+
+<script>
+const cmds = [
+  {
+    badge: "git init",
+    title: "Initialise a new local repository",
+    tag: "setup", tagLabel: "Setup / Fork",
+    desc: "Creates a new, empty Git repository in your current folder. This is always the first step when starting a brand-new project from scratch on your machine.",
+    steps: [
+      "Open VS Code and open the folder where your project lives (or create a new empty folder).",
+      "Open the integrated terminal: <code>Ctrl + `</code> (backtick).",
+      "Run <code>git init</code> — Git creates a hidden <code>.git</code> folder to track everything.",
+      "You'll see: <em>Initialized empty Git repository in …/.git/</em>",
+      "Optionally rename the default branch to main: <code>git branch -M main</code>"
+    ],
+    examples: [
+      { label: "Initialise a repo in the current folder", code: "git init" },
+      { label: "Initialise and name the branch main", code: "git init -b main" },
+      { label: "Initialise inside a new sub-folder", code: "git init my-project" }
+    ],
+    tip: "git init only needs to be run once per project. If you already see a .git folder, the repo is already initialised."
+  },
+  {
+    badge: "git config",
+    title: "Configure your Git identity",
+    tag: "setup", tagLabel: "Setup / Fork",
+    desc: "Sets your name and email so every commit is correctly attributed to you. This is a one-time setup on each new machine — you only need to do it once.",
+    steps: [
+      "Open any terminal (Git Bash, VS Code terminal, or Command Prompt).",
+      "Set your name: <code>git config --global user.name \"Your Name\"</code>",
+      "Set your email (use the same one as your GitHub account): <code>git config --global user.email \"you@email.com\"</code>",
+      "Optionally set VS Code as your default editor: <code>git config --global core.editor \"code --wait\"</code>",
+      "Verify everything looks correct: <code>git config --list</code>"
+    ],
+    examples: [
+      { label: "Set your name globally", code: 'git config --global user.name "Varun Saraiya"' },
+      { label: "Set your email globally", code: 'git config --global user.email "varun@example.com"' },
+      { label: "View all config settings", code: "git config --list" },
+      { label: "View a single setting", code: "git config user.name" }
+    ],
+    tip: "--global applies to all your repos on this machine. Omit it to set config only for the current repo."
+  },
+  {
+    badge: "git remote add",
+    title: "Connect local repo to GitHub",
+    tag: "setup", tagLabel: "Setup / Fork",
+    desc: "Links your local repository to a remote one on GitHub so you can push and pull code. This is needed after git init before you can share your code.",
+    steps: [
+      "Create a new repository on GitHub (github.com → New repository). Do NOT add a README if starting from local.",
+      "Copy the repository URL from GitHub (HTTPS or SSH).",
+      "In your local terminal, run: <code>git remote add origin &lt;your-repo-url&gt;</code>",
+      "Verify the remote was added: <code>git remote -v</code>",
+      "Now push your first commit: <code>git push -u origin main</code>"
+    ],
+    examples: [
+      { label: "Add a remote called origin", code: "git remote add origin https://github.com/vismaysaraiya/playwrightautomation.git" },
+      { label: "Verify remotes are set", code: "git remote -v" },
+      { label: "Change the remote URL", code: "git remote set-url origin https://github.com/user/new-repo.git" },
+      { label: "Remove a remote", code: "git remote remove origin" }
+    ],
+    tip: "origin is just a conventional name — it refers to your GitHub remote. You can name it anything, but origin is the universal standard."
+  },
+  {
+    badge: "git clone",
+    title: "Clone a repository to your machine",
+    tag: "setup", tagLabel: "Setup / Fork",
+    desc: "Downloads a complete copy of a remote repository (from GitHub) to your local machine, including all history, branches, and files. This is how you start working on an existing project.",
+    steps: [
+      "Go to the repository on GitHub you want to clone.",
+      "Click the green <strong>Code</strong> button and copy the HTTPS or SSH URL.",
+      "Open your terminal and navigate to where you want the project folder.",
+      "Run: <code>git clone &lt;repo-url&gt;</code> — Git creates a new folder with the repo name.",
+      "Navigate into it: <code>cd repo-name</code> and you're ready to work."
+    ],
+    examples: [
+      { label: "Clone a public repo", code: "git clone https://github.com/vismaysaraiya/playwrightautomation.git" },
+      { label: "Clone into a custom folder name", code: "git clone https://github.com/user/repo.git my-folder" },
+      { label: "Clone a specific branch only", code: "git clone -b develop https://github.com/user/repo.git" },
+      { label: "Clone with SSH (if SSH key is set up)", code: "git clone git@github.com:user/repo.git" }
+    ],
+    tip: "Cloning already sets up the remote origin for you — no need to run git remote add after cloning."
+  },
+  {
+    badge: "Fork (GitHub UI)",
+    title: "Fork a repository on GitHub",
+    tag: "setup", tagLabel: "Setup / Fork",
+    desc: "Forking creates your own personal copy of someone else's repository under your GitHub account. You can freely experiment without affecting the original. Common for open-source contribution.",
+    steps: [
+      "Go to the repository you want to fork on github.com.",
+      "Click the <strong>Fork</strong> button in the top-right corner of the page.",
+      "Choose your GitHub account as the destination — GitHub creates a copy under your account.",
+      "Once forked, clone YOUR fork to your machine: <code>git clone https://github.com/YOUR-USERNAME/repo.git</code>",
+      "Add the original repo as an upstream remote so you can sync future updates: <code>git remote add upstream https://github.com/ORIGINAL-OWNER/repo.git</code>",
+      "Verify both remotes exist: <code>git remote -v</code> — you should see both origin (your fork) and upstream (original)."
+    ],
+    examples: [
+      { label: "Clone your fork after forking on GitHub", code: "git clone https://github.com/vismaysaraiya/playwrightautomation.git" },
+      { label: "Add the original repo as upstream", code: "git remote add upstream https://github.com/ORIGINAL-OWNER/playwrightautomation.git" },
+      { label: "Fetch latest changes from original repo", code: "git fetch upstream" },
+      { label: "Merge upstream changes into your local main", code: "git checkout main\ngit merge upstream/main" },
+      { label: "Push the merged updates to your fork", code: "git push origin main" }
+    ],
+    tip: "Fork = your copy on GitHub. Clone = download to your machine. Always add upstream so you can keep your fork in sync with the original project."
+  },
+  {
+    badge: "git branch",
+    title: "List all branches",
+    tag: "branch", tagLabel: "Branch",
+    desc: "Shows all local branches. The current branch is highlighted with an asterisk (*). Use -a to see remote branches too.",
+    examples: [
+      { label: "List local branches", code: "git branch" },
+      { label: "List all (local + remote)", code: "git branch -a" },
+      { label: "List with last commit info", code: "git branch -v" }
+    ],
+    tip: "The branch marked with * is your current working branch."
+  },
+  {
+    badge: "git branch <name>",
+    title: "Create a new branch",
+    tag: "branch", tagLabel: "Branch",
+    desc: "Creates a new branch pointing to the current commit. This doesn't switch you to the new branch — it just creates it.",
+    examples: [
+      { label: "Create a branch", code: "git branch feature/login" },
+      { label: "Create branch from a specific commit", code: "git branch bugfix/crash abc1234" }
+    ],
+    tip: "Use naming conventions like feature/, bugfix/, or hotfix/ to keep branches organised."
+  },
+  {
+    badge: "git checkout -b",
+    title: "Create and switch to a new branch",
+    tag: "branch", tagLabel: "Branch",
+    desc: "Creates a new branch AND immediately switches to it in one step. This is the most common way to start working on something new.",
+    examples: [
+      { label: "Create and switch", code: "git checkout -b feature/navbar" },
+      { label: "Modern alternative (Git 2.23+)", code: "git switch -c feature/navbar" },
+      { label: "Branch off a specific remote branch", code: "git checkout -b feature/x origin/main" }
+    ],
+    tip: "git switch -c is the newer, cleaner way to do the same thing."
+  },
+  {
+    badge: "git checkout",
+    title: "Switch to an existing branch",
+    tag: "branch", tagLabel: "Branch",
+    desc: "Switches your working directory to a different branch. All uncommitted changes must be saved or stashed before switching.",
+    examples: [
+      { label: "Switch branch", code: "git checkout main" },
+      { label: "Switch using newer syntax", code: "git switch main" },
+      { label: "Go back to previous branch", code: "git checkout -" }
+    ],
+    tip: "git checkout - is a shortcut to jump back to the last branch you were on."
+  },
+  {
+    badge: "git status",
+    title: "Check what has changed",
+    tag: "history", tagLabel: "History",
+    desc: "Shows the state of your working directory — which files are modified, staged, or untracked. Always run this before committing.",
+    examples: [
+      { label: "Full status output", code: "git status" },
+      { label: "Short / compact output", code: "git status -s" }
+    ],
+    tip: "Red = not staged. Green = staged and ready to commit."
+  },
+  {
+    badge: "git add",
+    title: "Stage changes for commit",
+    tag: "branch", tagLabel: "Branch",
+    desc: "Moves changes from your working directory into the staging area. Only staged changes are included in the next commit.",
+    examples: [
+      { label: "Stage a specific file", code: "git add src/login.ts" },
+      { label: "Stage all changes", code: "git add ." },
+      { label: "Stage parts of a file interactively", code: "git add -p" }
+    ],
+    tip: "Use git add . to stage everything, but review with git status first so you don't accidentally include debug files."
+  },
+  {
+    badge: "git commit",
+    title: "Save staged changes as a commit",
+    tag: "branch", tagLabel: "Branch",
+    desc: "Records a permanent snapshot of your staged changes in the repository history. Every commit needs a descriptive message.",
+    examples: [
+      { label: "Commit with a message", code: 'git commit -m "feat: add login form validation"' },
+      { label: "Stage all tracked + commit in one step", code: 'git commit -am "fix: resolve null pointer error"' },
+      { label: "Amend the last commit message", code: 'git commit --amend -m "corrected message"' }
+    ],
+    tip: "Write commit messages in present tense: 'fix bug' not 'fixed bug'. Use prefixes like feat:, fix:, chore: for clarity."
+  },
+  {
+    badge: "git push",
+    title: "Push commits to remote",
+    tag: "remote", tagLabel: "Push / Pull",
+    desc: "Uploads your local branch commits to the remote repository (GitHub). The first push of a new branch needs the -u flag to set the upstream.",
+    examples: [
+      { label: "First push of a new branch", code: "git push -u origin feature/navbar" },
+      { label: "Push after upstream is set", code: "git push" },
+      { label: "Push all local branches", code: "git push --all origin" }
+    ],
+    tip: "After the first push with -u, you only need git push for subsequent pushes from the same branch."
+  },
+  {
+    badge: "git pull",
+    title: "Pull latest changes from remote",
+    tag: "remote", tagLabel: "Push / Pull",
+    desc: "Fetches changes from the remote repository and merges them into your current branch. Equivalent to git fetch + git merge.",
+    examples: [
+      { label: "Pull current branch", code: "git pull" },
+      { label: "Pull specific branch", code: "git pull origin main" },
+      { label: "Pull and rebase instead of merge", code: "git pull --rebase origin main" }
+    ],
+    tip: "Use git pull --rebase to keep a cleaner, linear commit history instead of creating a merge commit."
+  },
+  {
+    badge: "git fetch",
+    title: "Download remote changes (no merge)",
+    tag: "remote", tagLabel: "Push / Pull",
+    desc: "Downloads changes from the remote but does NOT apply them to your working branch. Safe way to see what others have done before merging.",
+    examples: [
+      { label: "Fetch all remote branches", code: "git fetch origin" },
+      { label: "Fetch a specific branch", code: "git fetch origin main" },
+      { label: "Fetch and prune deleted remote branches", code: "git fetch --prune" }
+    ],
+    tip: "Think of fetch as 'preview'. After fetching, inspect with git log origin/main before merging."
+  },
+  {
+    badge: "git stash",
+    title: "Temporarily save uncommitted work",
+    tag: "branch", tagLabel: "Branch",
+    desc: "Saves your current uncommitted changes to a temporary stack so you can switch branches or pull without losing work.",
+    examples: [
+      { label: "Stash all changes", code: "git stash" },
+      { label: "Stash with a label", code: 'git stash push -m "WIP: login form"' },
+      { label: "Restore the latest stash", code: "git stash pop" },
+      { label: "List all stashes", code: "git stash list" }
+    ],
+    tip: "git stash pop restores your changes AND removes them from the stash. Use git stash apply to restore but keep the stash."
+  },
+  {
+    badge: "git merge",
+    title: "Merge a branch into current branch",
+    tag: "merge", tagLabel: "Merge / Rebase",
+    desc: "Integrates changes from another branch into your current branch. Creates a merge commit that shows where branches joined.",
+    examples: [
+      { label: "Merge feature into main", code: "git checkout main\ngit merge feature/navbar" },
+      { label: "Merge without a merge commit", code: "git merge --ff-only feature/navbar" },
+      { label: "Abort a conflicted merge", code: "git merge --abort" }
+    ],
+    tip: "If there are conflicts, Git will mark them in the files. Resolve them, then run git add . and git commit."
+  },
+  {
+    badge: "git rebase",
+    title: "Replay commits on top of another branch",
+    tag: "merge", tagLabel: "Merge / Rebase",
+    desc: "Re-applies your commits on top of another branch, creating a clean linear history. Better for keeping history readable.",
+    examples: [
+      { label: "Rebase your branch onto main", code: "git checkout feature/navbar\ngit rebase main" },
+      { label: "Interactive rebase (edit last 3 commits)", code: "git rebase -i HEAD~3" },
+      { label: "Abort a rebase", code: "git rebase --abort" }
+    ],
+    tip: "Never rebase branches that others are working on — it rewrites history and causes conflicts for your team."
+  },
+  {
+    badge: "git log",
+    title: "View commit history",
+    tag: "history", tagLabel: "History",
+    desc: "Shows the history of commits on the current branch. Useful to understand what changed, when, and by whom.",
+    examples: [
+      { label: "Full commit history", code: "git log" },
+      { label: "One-line summary per commit", code: "git log --oneline" },
+      { label: "Visual branch graph", code: "git log --oneline --graph --all" },
+      { label: "Last 5 commits only", code: "git log -5 --oneline" }
+    ],
+    tip: "git log --oneline --graph --all is great for visualising your branch structure in the terminal."
+  },
+  {
+    badge: "git diff",
+    title: "See what has changed",
+    tag: "history", tagLabel: "History",
+    desc: "Shows line-by-line differences in your files. Red = removed, green = added. Useful before staging or committing.",
+    examples: [
+      { label: "Unstaged changes", code: "git diff" },
+      { label: "Staged (about to be committed) changes", code: "git diff --staged" },
+      { label: "Compare two branches", code: "git diff main..feature/navbar" }
+    ],
+    tip: "Use git diff --staged to review what will be in your next commit before running git commit."
+  },
+  {
+    badge: "git reset",
+    title: "Undo commits or unstage files",
+    tag: "history", tagLabel: "History",
+    desc: "Moves HEAD backwards in history. --soft keeps changes staged, --mixed (default) keeps changes unstaged, --hard discards changes completely.",
+    examples: [
+      { label: "Unstage a file (keep changes)", code: "git reset HEAD src/login.ts" },
+      { label: "Undo last commit (keep changes staged)", code: "git reset --soft HEAD~1" },
+      { label: "Undo last commit (unstage changes)", code: "git reset HEAD~1" },
+      { label: "Discard last commit and all changes", code: "git reset --hard HEAD~1" }
+    ],
+    tip: "⚠️ --hard permanently deletes uncommitted changes. Always double-check before using it."
+  },
+  {
+    badge: "git branch -d",
+    title: "Delete a local branch",
+    tag: "cleanup", tagLabel: "Delete / Clean",
+    desc: "Removes a branch from your local repository. Use -d (safe) to only delete if fully merged, or -D (force) to delete regardless.",
+    examples: [
+      { label: "Safe delete (merged branches only)", code: "git branch -d feature/navbar" },
+      { label: "Force delete (even if unmerged)", code: "git branch -D feature/navbar" },
+      { label: "Delete multiple branches", code: "git branch -d feature/a feature/b" }
+    ],
+    tip: "Always switch to a different branch first — you can't delete the branch you're currently on."
+  },
+  {
+    badge: "git push --delete",
+    title: "Delete a remote branch",
+    tag: "cleanup", tagLabel: "Delete / Clean",
+    desc: "Removes a branch from the remote repository (GitHub). This is separate from deleting it locally — you need to do both if you want it gone everywhere.",
+    examples: [
+      { label: "Delete remote branch", code: "git push origin --delete feature/navbar" },
+      { label: "Shorthand syntax", code: "git push origin :feature/navbar" },
+      { label: "Clean up stale remote tracking refs locally", code: "git remote prune origin" }
+    ],
+    tip: "After merging a PR on GitHub, delete the remote branch there. Then run git branch -d locally to stay clean."
+  }
+];
+
+let activeTab = 'all';
+let searchQuery = '';
+
+function tagClass(tag) {
+  return { branch: 'tag-branch', remote: 'tag-remote', merge: 'tag-merge', history: 'tag-history', cleanup: 'tag-cleanup', setup: 'tag-setup' }[tag] || '';
+}
+
+function renderCmds() {
+  const list = document.getElementById('cmd-list');
+  const counter = document.getElementById('counter');
+  const q = searchQuery.toLowerCase();
+
+  const filtered = cmds.filter(c => {
+    const matchTab = activeTab === 'all' || c.tag === activeTab;
+    const matchSearch = !q || c.badge.toLowerCase().includes(q) || c.title.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q);
+    return matchTab && matchSearch;
+  });
+
+  counter.textContent = `Showing ${filtered.length} of ${cmds.length} commands`;
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="no-results">No commands match your search.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((c, i) => `
+    <div class="cmd-card" id="card-${i}" onclick="toggle(${i})">
+      <div class="cmd-header">
+        <span class="cmd-badge">${c.badge}</span>
+        <span class="cmd-title">${c.title}</span>
+        <span class="cmd-tag ${tagClass(c.tag)}">${c.tagLabel}</span>
+        <span class="chevron">&#8964;</span>
+      </div>
+      <div class="cmd-body">
+        <p class="cmd-desc">${c.desc}</p>
+        ${c.steps ? `
+          <div class="section-divider">Step-by-step</div>
+          <ol class="steps-list">
+            ${c.steps.map(s => `<li><span class="step-num">${c.steps.indexOf(s)+1}</span><span class="step-text">${s}</span></li>`).join('')}
+          </ol>
+        ` : ''}
+        ${c.examples && c.examples.length ? `<div class="section-divider">Commands</div>` : ''}
+        ${c.examples ? c.examples.map(ex => `
+          <div class="code-label">${ex.label}</div>
+          <div class="code-block">${ex.code}</div>
+        `).join('') : ''}
+        <div class="tip">💡 ${c.tip}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggle(i) {
+  const card = document.getElementById('card-' + i);
+  card.classList.toggle('open');
+}
+
+function setTab(tab, el) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => {
+    t.className = 'tab';
+  });
+  el.classList.add('active-' + tab);
+  renderCmds();
+}
+
+function filterCmds() {
+  searchQuery = document.getElementById('search').value;
+  renderCmds();
+}
+
+renderCmds();
+</script>
+</body>
+</html>
